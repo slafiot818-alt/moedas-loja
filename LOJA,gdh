@@ -1,0 +1,62 @@
+const { Client, GatewayIntentBits, SlashCommandBuilder, REST, Routes } = require('discord.js');
+
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds]
+});
+
+const comandos = [
+  new SlashCommandBuilder()
+    .setName('painel')
+    .setDescription('Mostra o painel da Moedas LOJA'),
+
+  new SlashCommandBuilder()
+    .setName('saldo')
+    .setDescription('Consulta seu saldo de Coins'),
+
+  new SlashCommandBuilder()
+    .setName('historico')
+    .setDescription('Consulta o histórico de movimentações')
+].map(c => c.toJSON());
+
+client.once('ready', async () => {
+  console.log(`Bot conectado como ${client.user.tag}`);
+
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+
+  try {
+    await rest.put(
+      Routes.applicationCommands(client.user.id),
+      { body: comandos }
+    );
+    console.log('Comandos registrados!');
+  } catch (erro) {
+    console.error('Erro ao registrar comandos:', erro);
+  }
+});
+
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === 'painel') {
+    await interaction.reply({
+      content: '🪙 **MOEDAS LOJA**\nUse /saldo para consultar seu saldo e /historico para ver movimentações.',
+      ephemeral: true
+    });
+  }
+
+  if (interaction.commandName === 'saldo') {
+    await interaction.reply({
+      content: '🪙 Seu saldo ainda não foi cadastrado. Procure a gerência.',
+      ephemeral: true
+    });
+  }
+
+  if (interaction.commandName === 'historico') {
+    await interaction.reply({
+      content: '📋 Seu histórico ainda não possui movimentações.',
+      ephemeral: true
+    });
+  }
+});
+
+client.login(process.env.DISCORD_TOKEN);
