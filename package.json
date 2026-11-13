@@ -1,1 +1,12 @@
-
+{
+  "name": "moedas-loja",
+  "version": "1.0.0",
+  "description": "Bot de gerenciamento da loja de Coins",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  }
+}
